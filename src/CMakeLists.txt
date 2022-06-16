@@ -1,6 +1,8 @@
 set(DATA_STRUCTURES_SRCS
   avltree.cpp
   heap.cpp
+  undirectedSimpleGraph.cpp
+  disjoinset.cpp
 )
 
 add_library(DataStructures ${DATA_STRUCTURES_SRCS})
