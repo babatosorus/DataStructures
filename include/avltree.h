@@ -4,6 +4,7 @@
 #include <numeric>
 #include<limits>
 #include <iostream>
+#include <functional>
 
 template<typename T, typename D>
 class AVLTree
@@ -53,21 +54,18 @@ class AVLTree
         return n->m_Data;
     }
 
-    int size()
+    int size() const
     {
-    //     int size = 0;
-    //     postOrder
-    //     (
-    //         m_Root,
-    //         [&] (Node* n)
-    //         {
-    //             ++size;
-    //         }
-    //     );
+        int size = 0;
+        postOrder(
+            m_Root,
+            [&] (Node* n)
+            {
+                ++size;
+            }
+        );
 
-    //     return size;
-
-        return 0;
+         return size;
     }
 
     void clear()
@@ -381,16 +379,16 @@ private:
     }
 
 
-    // void postOrder(Node* n, void (*func)(Node*))
-    // {
-    //     if (n == NULL)
-    //         return;
+     void postOrder(Node* n, const std::function<void(Node*)>& func)
+    {
+         if (n == NULL)
+            return;
 
-    //     postOrder(n->m_Left, func);
-    //     postOrder(n->m_Right, func);
+        postOrder(n->m_Left, func);
+        postOrder(n->m_Right, func);
 
-    //     func(n);
-    // }
+        func(n);
+    }
 
     Node* copyAll(Node* source)
     {

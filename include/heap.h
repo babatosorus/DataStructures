@@ -73,7 +73,7 @@ class Heap
         return ret;
     }
 
-    friend std::ostream& operator <<(std::ostream& os, const Heap& k)
+    friend std::ostream& operator << (std::ostream& os, const Heap& k)
     {
         for (int i = 0; i < k.m_Size; i++)
             std::cout<<k.m_Array[i]<< " ";

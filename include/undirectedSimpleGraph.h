@@ -59,5 +59,6 @@ class UndirectedSimpleGraph
 	};
 
 	std::unordered_map<std::string, EdgeInfo> m_Edges;
+	
 	std::unordered_map<std::string, std::unordered_set<std::string>> m_Vertices;
 };

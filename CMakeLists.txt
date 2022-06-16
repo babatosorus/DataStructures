@@ -15,12 +15,14 @@ set(INC_ROOT ${PROJECT_SOURCE_DIR}/include)
 
 include(${PROJECT_SOURCE_DIR}/cmake/dependencies.cmake)
 
-if(BUILD_TESTING AND ${PROJECT_NAME}_IS_TOP_LEVEL)
+add_subdirectory(src)
+
+
+if(BUILD_TESTING)
     include(CTest)
     add_subdirectory(tests)
 endif()
 
-add_subdirectory(src)
 
 
 
