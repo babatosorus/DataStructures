@@ -19,9 +19,7 @@ TEST_CASE( "AVL Tree" )
   dictionary.insert(13, "treize");
 
   REQUIRE(dictionary.size() == 6);
-// REQUIRE(dictionary.getNodeHeight() == 2);
-
-  std::cout<<dictionary<<std::endl;
+  REQUIRE(dictionary.height() == 2);
 
   std::queue<int> s({1, 5, 10, 13, 15, 100});
   auto f = [&](const int& key, const std::string& val)
@@ -36,7 +34,7 @@ TEST_CASE( "AVL Tree" )
   dictionary.insert(122, "cent vingt deux");
   dictionary.insert(0, "zero");
   REQUIRE(dictionary.size() == 6);
-  //REQUIRE(dictionary.getNodeHeight() == 2);
+  REQUIRE(dictionary.height() == 2);
 
   s =  std::queue<int>({0, 10, 13, 15, 100, 122});
   dictionary.inOrderTraverse(f);

@@ -58,21 +58,6 @@ public :
     m_LookUp[val] = m_Size -1;
   }
 
-  // void setValue(const int& index, const int& parent)
-  // {
-  // 	if (index < 0 || index >= m_Size)
-  // 		return;
-
-  // 	if (parent <= -1  || parent >= m_Size)
-  // 		return;
-
-  // 	int oldParent = m_Array[index].Parent;
-  // 	m_Array[index].Parent = parent;
-
-  // 	updateParent(oldParent, -m_Array[index].Size);
-  // 	updateParent(parent, m_Array[index].Size);
-  // }
-
   int find(const T& val)
   {
     auto it = m_LookUp.find(val);
@@ -150,15 +135,6 @@ private :
     int Parent;
     int Size;
   };
-
-  // void updateParent(const int& index, const int& val)
-  // {
-  // 	if (index < 0)
-  // 		return;
-
-  // 	m_Array[index].Size += val;
-  // 	updateParent(m_Array[index].Parent, val);
-  // }
 
 private :
 

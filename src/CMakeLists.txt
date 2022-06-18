@@ -1,5 +1,5 @@
 set(DATA_STRUCTURES_SRCS
-  avltree.cpp
+  ${INC_ROOT}/avltree.h
   heap.cpp
   undirectedSimpleGraph.cpp
   disjoinset.cpp
