@@ -34,7 +34,7 @@ public :
     clear();
   }
 
-  AVLTree& operator =(const AVLTree & source)
+  AVLTree& operator = (const AVLTree & source)
   {
     m_Root = copyAll(source.m_Root);
     return *this;
@@ -59,11 +59,26 @@ public :
   int size()
   {
     int size = 0;
-    postOrder(
+    inOrder(
       m_Root,
-      [&] (Node* n)
+      [&] (const T&, const D&)
     {
       ++size;
+    }
+    );
+
+    return size;
+  }
+
+  int height()
+  {
+    int height = 0;
+
+    inOrder(
+      m_Root,
+      [&] (const T&, const D&)
+    {
+      std::max(height, )
     }
     );
 
@@ -81,6 +96,11 @@ public :
     tree.dumpNode(tree.m_Root, os);
     os<<std::endl;
     return os;
+  }
+
+  void inOrderTraverse(const std::function<void(const T&, const D&)>& func)
+  {
+    inOrder(m_Root, func);
   }
 
 private :
@@ -157,18 +177,18 @@ private:
     else if (key > node->m_Key)
     {
       node->m_Right = insert_(node->m_Right, key, data);
-      ret = checkBalance(node);
+      ret = checkNodeBalance(node);
     }
     else
     {
       node->m_Left = insert_(node->m_Left, key, data);
-      ret = checkBalance(node);
+      ret = checkNodeBalance(node);
     }
 
     return ret;
   }
 
-  void updateHeight(Node* node)
+  void updateNodeHeight(Node* node)
   {
     if (node == nullptr)
     {
@@ -176,12 +196,12 @@ private:
     }
 
     node->m_Height = 1 + std::max(
-                       getHeight(node->m_Left),
-                       getHeight(node->m_Right)
+                       getNodeHeight(node->m_Left),
+                       getNodeHeight(node->m_Right)
                      );
   }
 
-  int getHeight(Node* n)
+  int getNodeHeight(Node* n)
   {
     if (n == nullptr)
     {
@@ -191,17 +211,17 @@ private:
     return n->m_Height;
   }
 
-  int getBalanceFactor(Node* n)
+  int getNodeBalanceFactor(Node* n)
   {
     if (n == nullptr)
     {
       return 0;
     }
 
-    return getHeight(n->m_Right) - getHeight(n->m_Left);
+    return getNodeHeight(n->m_Right) - getNodeHeight(n->m_Left);
   }
 
-  Node* rotateLeft(Node* node)
+  Node* rotateNodeLeft(Node* node)
   {
     if (node == nullptr)
     {
@@ -215,13 +235,13 @@ private:
     x->m_Right = z;
     y->m_Left = x;
 
-    updateHeight(x);
-    updateHeight(y);
+    updateNodeHeight(x);
+    updateNodeHeight(y);
 
     return y;
   }
 
-  Node* rotateRight(Node* node)
+  Node* rotateNodeRight(Node* node)
   {
     if (node == nullptr)
     {
@@ -235,13 +255,13 @@ private:
     y->m_Right = x;
     x->m_Left = z;
 
-    updateHeight(x);
-    updateHeight(y);
+    updateNodeHeight(x);
+    updateNodeHeight(y);
 
     return y;
   }
 
-  Node* checkBalance(Node* node)
+  Node* checkNodeBalance(Node* node)
   {
     Node* ret = node;
 
@@ -250,44 +270,34 @@ private:
       return ret;
     }
 
-    std::cout<<"checkBalance "<<node->m_Key<<std::endl;
+    updateNodeHeight(node);
 
-    updateHeight(node);
-
-    int balanceFactor = getBalanceFactor(node);
+    int balanceFactor = getNodeBalanceFactor(node);
 
     if (balanceFactor == 2)
     {
-      printf("inbalance right\n");
-      int rChildBalanceFactor = getBalanceFactor(node->m_Right);
-      printf("second  factor == %i\n", rChildBalanceFactor);
+      int rChildBalanceFactor = getNodeBalanceFactor(node->m_Right);
       if (rChildBalanceFactor == 1 || rChildBalanceFactor == 0)
       {
-        printf("1\n");
-        ret = rotateLeft(node);
+        ret = rotateNodeLeft(node);
       }
       else if (rChildBalanceFactor == -1)
       {
-        printf("2\n");
-        rotateRight(node->m_Right);
-        ret = rotateLeft(node);
+        rotateNodeRight(node->m_Right);
+        ret = rotateNodeLeft(node);
       }
     }
     else if (balanceFactor == -2)
     {
-      printf("inbalance left\n");
-      int lChildBalanceFactor = getBalanceFactor(node->m_Left);
-      printf("second  factor == %i\n", lChildBalanceFactor);
+      int lChildBalanceFactor = getNodeBalanceFactor(node->m_Left);
       if (lChildBalanceFactor == 1 || lChildBalanceFactor == 0)
       {
-        printf("3\n");
-        rotateLeft(node->m_Left);
-        ret = rotateRight(node);
+        rotateNodeLeft(node->m_Left);
+        ret = rotateNodeRight(node);
       }
       else if (lChildBalanceFactor == -1)
       {
-        printf("4\n");
-        ret = rotateRight(node);
+        ret = rotateNodeRight(node);
       }
     }
 
@@ -302,18 +312,17 @@ private:
     }
     else if (node->m_Key == key)
     {
-      std::cout<<"ccoucou"<<std::endl;
       return deleteNode(node);
     }
     else if (key > node->m_Key)
     {
       node->m_Right = remove_(node->m_Right, key);
-      return checkBalance(node);
+      return checkNodeBalance(node);
     }
     else
     {
       node->m_Left = remove_(node->m_Left, key);
-      return checkBalance(node);
+      return checkNodeBalance(node);
     }
   }
 
@@ -325,7 +334,6 @@ private:
       if (node->m_Left == nullptr)
       {
         // none
-        std::cout<<"nada"<<std::endl;
         delete node;
       }
       else
@@ -364,12 +372,12 @@ private:
 
     if (node->m_Right != nullptr)
     {
-      Node* node = findIOP(node->m_Right, iop, true);
+      Node* cnode(findIOP(node->m_Right, iop, true));
       if (balanceChecking == true)
       {
-        checkBalance(node);
+        checkNodeBalance(cnode);
       }
-      return node;
+      return cnode;
     }
     {
       iop = node;
@@ -411,18 +419,19 @@ private:
     delete node;
   }
 
-
-  void postOrder(Node* n, const std::function<void(Node*)>& func)
+  void inOrder(Node* n, const std::function<void(const T&, const D&)>& func)
   {
     if (n == NULL)
     {
       return;
     }
 
-    postOrder(n->m_Left, func);
-    postOrder(n->m_Right, func);
+    inOrder(n->m_Left, func);
 
-    func(n);
+    func(n->m_Key, n->m_Data);
+
+    inOrder(n->m_Right, func);
+
   }
 
   Node* copyAll(Node* source)
@@ -439,7 +448,7 @@ private:
     n->m_Left = left;
     n->m_Right = right;
 
-    updateHeight(n);
+    updateNodeHeight(n);
 
     return n;
   }

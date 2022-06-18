@@ -5,34 +5,23 @@
 #include <iostream>
 #include <fstream>
 
+#include<optional>
 
-enum HEAP_TYPE
-{
-  MIN_HEAP,
-  MAX_HEAP
-};
-
-template <typename T, HEAP_TYPE heap_type>
-class Heap
+template <typename T>
+class MinHeap
 {
 public :
 
-  Heap()
+  MinHeap()
     :
-    m_Array(nullptr),
     m_Capacity(0),
     m_Size(0)
-  {}
-
-  ~Heap()
   {
-    clear();
   }
 
   void clear()
   {
-    delete [] m_Array;
-    m_Array = nullptr;
+    m_Array.reset();
     m_Capacity = 0;
     m_Size = 0;
   }
@@ -77,7 +66,7 @@ public :
     return ret;
   }
 
-  friend std::ostream& operator << (std::ostream& os, const Heap& k)
+  friend std::ostream& operator << (std::ostream& os, const MinHeap& k)
   {
     for (int i = 0; i < k.m_Size; i++)
     {
@@ -87,11 +76,6 @@ public :
     std::cout<<std::endl;
 
     return os;
-  }
-
-  explicit operator const T*() const
-  {
-    return m_Array;
   }
 
   void write(const char* filename)
@@ -122,6 +106,7 @@ public :
 
     clear();
 
+
     std::ifstream::pos_type pos = inputFile.tellg();
     int lenght = pos;
     m_Size = lenght/sizeof(T);
@@ -132,7 +117,7 @@ public :
       return;
     }
 
-    m_Array = new T[m_Size];
+    m_Array = std::make_unique<T*>(new T[m_Size]);
 
     inputFile.seekg(0, std::ios::beg);
     inputFile.read(reinterpret_cast<char*>(m_Array), lenght);
@@ -144,21 +129,22 @@ private :
 
   void resize()
   {
-    if (m_Array == nullptr)
+    // Apply the STL strategy to multiply by 2 the capacity each time
+    // we are full.
+    if (m_Array.get() == nullptr)
     {
       m_Capacity = 1;
-      m_Array = new T [m_Capacity];
+      m_Array = std::unique_ptr<T[]>(new T [m_Capacity]);
     }
     else
     {
       m_Capacity *= 2;
-      T* newArray = new T [m_Capacity];
+      auto newArray = std::unique_ptr<T[]>(new T [m_Capacity]);
       for (int i = 0; i < m_Size; i++)
       {
         newArray[i] = m_Array[i];
       }
-      delete [] m_Array;
-      m_Array = newArray;
+      m_Array.swap(newArray);
     }
   }
 
@@ -176,19 +162,9 @@ private :
 
     int minChildIndex = getMinChild(index);
 
-    if (heap_type == HEAP_TYPE::MIN_HEAP)
+    if (m_Array[index] > m_Array[minChildIndex])
     {
-      if (m_Array[index] > m_Array[minChildIndex])
-      {
-        std::swap(m_Array[index], m_Array[minChildIndex]);
-      }
-    }
-    else
-    {
-      if (m_Array[index] < m_Array[minChildIndex])
-      {
-        std::swap(m_Array[index], m_Array[minChildIndex]);
-      }
+      std::swap(m_Array[index], m_Array[minChildIndex]);
     }
 
     heapifyDown(minChildIndex);
@@ -228,19 +204,9 @@ private :
 
     int parentIndex = getParentIndex(index);
 
-    if (heap_type == HEAP_TYPE::MIN_HEAP)
+    if (m_Array[index] < m_Array[parentIndex])
     {
-      if (m_Array[index] < m_Array[parentIndex])
-      {
-        std::swap(m_Array[index], m_Array[parentIndex]);
-      }
-    }
-    else
-    {
-      if (m_Array[index] > m_Array[parentIndex])
-      {
-        std::swap(m_Array[index], m_Array[parentIndex]);
-      }
+      std::swap(m_Array[index], m_Array[parentIndex]);
     }
 
     heapifyUp(parentIndex);
@@ -268,7 +234,7 @@ private :
 
 private :
 
-  T*              m_Array;
-  int             m_Capacity;
-  int             m_Size;
+  std::unique_ptr<T[]>   m_Array;
+  int                   m_Capacity;
+  int                   m_Size;
 };

@@ -3,13 +3,14 @@
 #include <catch2/catch.hpp>
 
 #include <string>
-
+#include <queue>
 
 #include "avltree.h"
 
-TEST_CASE( "Heap test", "[heap]" )
+TEST_CASE( "AVL Tree" )
 {
   AVLTree<int, std::string> dictionary;
+
   dictionary.insert(100, "cent");
   dictionary.insert(10, "dix");
   dictionary.insert(1, "un");
@@ -17,34 +18,27 @@ TEST_CASE( "Heap test", "[heap]" )
   dictionary.insert(15, "quinze");
   dictionary.insert(13, "treize");
 
-  std::cout<<dictionary<<std::endl;
   REQUIRE(dictionary.size() == 6);
+// REQUIRE(dictionary.getNodeHeight() == 2);
+
+  std::cout<<dictionary<<std::endl;
+
+  std::queue<int> s({1, 5, 10, 13, 15, 100});
+  auto f = [&](const int& key, const std::string& val)
+  {
+    REQUIRE(s.front() == key);
+    s.pop();
+  };
+  dictionary.inOrderTraverse(f);
 
   dictionary.remove(5);
-  std::cout<<"deletion 5 ::"<<std::endl;
-  std::cout<<dictionary<<std::endl;
-
   dictionary.remove(1);
-  std::cout<<"deletion 1 ::"<<std::endl;
-  std::cout<<dictionary<<std::endl;
+  dictionary.insert(122, "cent vingt deux");
+  dictionary.insert(0, "zero");
+  REQUIRE(dictionary.size() == 6);
+  //REQUIRE(dictionary.getNodeHeight() == 2);
 
-  AVLTree<int, std::string> dictionary2 = dictionary;
-  std::cout<<"ctor ::"<<std::endl;
-  std::cout<<dictionary2<<std::endl;
+  s =  std::queue<int>({0, 10, 13, 15, 100, 122});
+  dictionary.inOrderTraverse(f);
 
-  dictionary2 = dictionary;
-  std::cout<<"operator = ::"<<std::endl;
-  std::cout<<dictionary2<<std::endl;
-
-  AVLTree<int, std::string> test
-  {
-    std::make_pair(1, "un"),
-    std::make_pair(2, "deux"),
-    std::make_pair(3, "trois"),
-    std::make_pair(4, "quatre"),
-    std::make_pair(5, "cinq")
-  };
-
-  std::cout<<"list ctor"<<std::endl;
-  std::cout<<test<<std::endl;
 }
