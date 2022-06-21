@@ -35,8 +35,9 @@ public :
     const std::string&vertexId2
   ) const;
 
-  std::unordered_set<std::string> getIncidentEdges(const std::string& vertexId)
-  const;
+  std::unordered_set<std::string> getIncidentEdges(
+    const std::string& vertexId
+  ) const;
 
   int getVertexDegree(const std::string& id) const;
   int getVertexNumber() const;
@@ -57,7 +58,6 @@ public :
   );
 
 private :
-
   struct EdgeInfo
   {
     std::string m_Vertex1;

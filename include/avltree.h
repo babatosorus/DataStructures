@@ -64,7 +64,6 @@ private:
   void inOrder(Node<T,D>* n, const std::function<void(const T&, const D&)>& func);
 
 private:
-
   Node<T,D>* m_Root;
 };
 

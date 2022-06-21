@@ -233,8 +233,7 @@ private :
   }
 
 private :
-
-  std::unique_ptr<T[]>   m_Array;
-  int                   m_Capacity;
-  int                   m_Size;
+  std::unique_ptr<T[]> m_Array;
+  int m_Capacity;
+  int m_Size;
 };

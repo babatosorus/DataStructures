@@ -16,12 +16,11 @@ public :
   friend std::ostream& operator<< (std::ostream& os, const Node& node);
 
 public :
-
-  T                       m_Key;
-  D                       m_Data;
-  Node*                   m_Left;
-  Node*                   m_Right;
-  int                     m_Height;
+  T m_Key;
+  D m_Data;
+  Node* m_Left;
+  Node* m_Right;
+  int m_Height;
 };
 
 template<typename T, typename D>
@@ -48,10 +47,10 @@ Node<T,D>::Node (const Node& node)
 template<typename T, typename D>
 std::ostream& operator<< (std::ostream& os, const Node<T,D>& node)
 {
-  os  <<" Key :" << node.m_Key
-      <<" Height : " << node.m_Height
-      <<" Left child : " << (node.m_Left != nullptr ? node.m_Left->m_Key : -1)
-      <<" Right child : " << (node.m_Right != nullptr ? node.m_Right->m_Key : -1);
+  os << " Key :" << node.m_Key
+     << " Height : " << node.m_Height
+     << " Left child : " << (node.m_Left != nullptr ? node.m_Left->m_Key : -1)
+     << " Right child : " << (node.m_Right != nullptr ? node.m_Right->m_Key : -1);
 
   return os;
 }
@@ -168,8 +167,11 @@ void AVLTree<T,D>::dumpNode(Node<T,D>* node, std::ostream& os) const
 }
 
 template< typename T, typename D>
-Node<T,D>* AVLTree<T,D>::insertNode (Node<T,D>* node, const T& key,
-                                     const D& data)
+Node<T,D>* AVLTree<T,D>::insertNode(
+  Node<T,D>* node,
+  const T& key,
+  const D& data
+)
 {
   Node<T,D>* ret = nullptr;
 
@@ -285,6 +287,9 @@ Node<T,D>* AVLTree<T,D>::checkNodeBalance(Node<T,D>* node)
 
   updateNodeHeight(node);
 
+  // Note : To balance our tree, we compute a balance factor :
+  // balance factor = leftNode Height - rightNode Height
+
   int balanceFactor = getNodeBalanceFactor(node);
 
   if (balanceFactor == 2)
@@ -367,6 +372,8 @@ Node<T,D>* AVLTree<T,D>::deleteNode(Node<T,D>* node)
   else
   {
     // left & right
+    // Note : Let's find the In Order Predecessor to replace
+    // the node we are about to delete
     Node<T,D>*  iop = nullptr;
     findIOP(node, iop, false);
     ret = iop;
